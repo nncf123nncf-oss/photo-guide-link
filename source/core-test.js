@@ -62,7 +62,28 @@ Object.keys(bad).forEach(k => eq('S4 ' + k, PG.decodeHash(bad[k]), null));
 ['免許証の表', '健康保険証', 'マイナンバーカード', '通帳', 'キャッシュカード', 'クレジットカード', 'パスポート', '暗証番号', '本人確認', '身分証', '在留カード', 'ｷｬｯｼｭｶｰﾄﾞ', 'マイナ ンバー', '通　帳'].forEach(s =>
   eq('S5 id ' + s, PG.blockedReason(s), 'id'));
 eq('S5 id error text', PG.toConfig(draftOf({ shop: 'A', task: 'B', photos: [{ fig: 1, what: '免許証', tips: 0 }] })).errors, ['写真1の「何を撮るか」：このページでは、身分証やお金に関わる書類の写真はお願いできません']);
-eq('S5 phone error text', PG.toConfig(draftOf({ shop: 'A 03-1234-5678', task: 'B', photos: [{ fig: 1, what: 'x', tips: 0 }] })).errors, ['店名に電話番号は入れられません']);
+eq('S5 phone error text', PG.toConfig(draftOf({ shop: 'A 03-1234-5678', task: 'B', photos: [{ fig: 1, what: 'x', tips: 0 }] })).errors, ['店名に電話番号らしい文字は入れられません（型番などの長い数字も止まります）']);
+// レビュー①で素通りした言い方（身分証・お金の書類）
+const inv = [0xfe0f, 0x034f, 0x3164, 0x2800, 0x180e].map(c => '通' + String.fromCharCode(c) + '帳');
+['運転免許の表と裏', '免許の表面', 'マイナカードの表', '健康保険の証', '口座番号が分かる所', 'キャッシュのカード', 'クレカの表と裏', 'デビットカード', '住民票', '年金手帳', '学生証', '社員証',
+  '顔写真', 'ご本人の自撮り', '暗証', 'PIN番号', 'カードの裏の3桁', '印鑑', '実印', '残高の画面', 'つうちょうの1ページ目', 'めんきょしょう', 'ツウチョウ', '通・帳', '通/帳', '通_帳',
+  'ID card', 'passport', 'bank book'].concat(inv).forEach(s => eq('S5 id2 ' + s, PG.blockedReason(s), 'id'));
+eq('S5 invisible in hash', PG.decodeHash(hashOf([1, 'A', 'B', [[1, inv[2], 0]], ''])), null);
+// 誤検知しないこと
+['マイナスドライバー', 'キャッシュレス対応', '型番', '3枚目', 'スピン', 'ピンの位置', '本体の裏側', 'ハンドメイド'].forEach(s => eq('S5 pass2 ' + s, PG.blockedReason(s), ''));
+// リンク・送り先の誘導
+['lin.ee/abc', 'forms.gle/abc', 'youtu.be/x', 'x.gd/abc', 'sample.ai', 'sample(dot)com', 'sample ドット com'].forEach(s => eq('S5 link2 ' + s, PG.blockedReason(s), 'link'));
+['LINE ID sagi123に送ってください', 'ID検索 abc', 'インスタのDMへ', '友だち追加してください', 'ラインIDはこちら'].forEach(s => eq('S5 lead ' + s, PG.blockedReason(s), 'lead'));
+// 漢数字の電話番号
+['090一1234一5678', '〇九〇 一二三四 五六七八'].forEach(s => eq('S5 kanji phone ' + s, PG.blockedReason(s), 'phone'));
+eq('S5 kanji date pass', PG.blockedReason('二〇二六年十一月'), '');
+// 店名の銀行・役所
+['サンプル銀行 お手続き窓口', '〇〇市役所', 'ゆうちょ窓口'].forEach(s => eq('S5 org ' + s, PG.toConfig(draftOf({ shop: s, task: 'B', photos: [{ fig: 1, what: 'x', tips: 0 }] })).errors, ['店名に銀行・役所などの名前は入れられません']));
+eq('S5 org in hash', PG.decodeHash(hashOf([1, 'サンプル銀行', 'B', [[1, 'x', 0]], ''])), null);
+eq('S5 org ok in what', PG.toConfig(draftOf({ shop: 'A店', task: 'B', photos: [{ fig: 1, what: '銀行の看板の横の入口', tips: 0 }] })).errors, []);
+// 絵文字で上限まで埋めると、リンクを作る時点で止まる（開くと壊れているにならない）
+const emo = PG.toConfig(draftOf({ shop: '😀'.repeat(30), task: '😀'.repeat(24), note: '😀'.repeat(80), photos: Array(6).fill({ fig: 8, what: '😀'.repeat(24), tips: 52 }) }));
+eq('S5 emoji too long', emo.errors, ['文字が多すぎてリンクにできません。絵文字や文を短くしてください']);
 
 // S6 XSS（文字としてそのまま往復する。表示は check.js で確認）
 const xss = '<img src=x onerror=alert(1)>';

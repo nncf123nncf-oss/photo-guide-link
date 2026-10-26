@@ -65,8 +65,8 @@
   .row-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 8px; }
   .row-head h3 { margin: 0; flex: 1 1 auto; }
   .row-head button { padding: 6px 10px; font-size: 15px; }
-  .row-fig { display: flex; gap: 10px; align-items: center; }
-  .row-fig > div { flex: 1 1 auto; min-width: 0; }
+  .row-fig { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+  .row-fig > div { flex: 1 1 100%; min-width: 0; }
   .tips { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; margin: 0 0 4px; padding: 0; border: 0; }
   .tips legend { font-weight: 600; margin: 0 0 4px; padding: 0; }
   .tip { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; line-height: 1.35; cursor: pointer; }
@@ -141,21 +141,41 @@ var PG = (function () {
       .replace(/[\u00ad\u200b-\u200f\u2060-\u2064\ufeff]/g, '')
       .replace(/[\u2010-\u2015\u2212\u30fc\uff70]/g, '-').replace(/[。｡]/g, '.');
   }
-  // リンク・メールアドレス・電話番号らしい文字を見つける（送り先を別の所へ誘導させない）。Day077と同じ規則
-  var TLD = '(?:com|net|org|jp|me|io|co|info|biz|xyz|app|dev|link|page|shop|site|online|tokyo|ly|gl|to|cc|tv|us|uk|ne|or|ac|go)';
+  // 言葉の照合用: カタカナをひらがなにそろえ、文字と数字以外（区切り・記号・見えない文字・長音）を落とす
+  // （表示や保存する文字はそのまま。照合のときだけこの形にする）
+  var RE_FILLER = new RegExp('[' + String.fromCharCode(0x3164, 0x115f, 0x1160, 0xffa0) + ']', 'g');
+  function wordKey(s) {
+    return norm(s).replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); })
+      .replace(/[^\p{L}\p{N}]/gu, '').replace(RE_FILLER, '');
+  }
+  function hasWord(key, words) { for (var i = 0; i < words.length; i++) if (key.indexOf(words[i]) >= 0) return true; return false; }
+  // リンク・メールアドレス・電話番号らしい文字を見つける（送り先を別の所へ誘導させない）。Day077の規則に、短縮URLの末尾とLINE IDなどの誘導を足した
+  var TLD = '(?:com|net|org|jp|me|io|co|info|biz|xyz|app|dev|link|page|shop|site|online|tokyo|ly|gl|to|cc|tv|us|uk|ne|or|ac|go|ee|gle|be|gd|ai|fm|in|so|top|cn|ru|kr|tw|hk|ws|gg|sh|im|is|li|la|vip|club|live|work|fun|icu)';
   var RE_DOMAIN = new RegExp('[^\\s.]+\\.' + TLD + '(?![a-z])');
-  // 身分証・お金に関わる書類の写真を求める文に使わせない。長音は norm で '-' になるので、比べる側も同じ形にする
-  var ID_WORDS = ['免許証', '保険証', 'マイナンバー', '個人番号', '通帳', 'キャッシュカード', 'クレジットカード', 'パスポート', '暗証番号', '本人確認', '身分証', '在留カード', 'カード番号', '印鑑証明'].map(norm);
+  // 「LINE IDに送って」「DMへ」のように、写真の送り先をよそへ向ける言い方
+  var LEAD_WORDS = ['lineid', 'らいんid', 'id検索', '友だち追加', '友達追加', 'ともだち追加', 'qrこど', 'dm', 'でぃえむ'].map(wordKey);
+  // 身分証・お金に関わる書類の写真を求める文に使わせない。語の根で持つ（「マイナ」だけ・「キャッシュ」だけにすると、マイナスドライバー・キャッシュレスが止まるので使わない）
+  var ID_WORDS = ['免許', '保険証', '健康保険', 'マイナンバ', 'マイナカ', 'マイナ保険', '個人番号', '通帳', '口座', 'キャッシュカ', 'キャッシュのカ', 'クレジット', 'クレカ', 'デビット',
+    'カード番号', 'カードの裏', '暗証', 'パスポート', '旅券', '本人確認', '身分', '在留', '住民票', '戸籍', '年金手帳', '学生証', '社員証', '印鑑', '実印', '顔写真', '自撮り', 'セルフィ', '残高',
+    'つうちょう', 'めんきょ', 'こうざ', 'ほけんしょう', 'あんしょう', 'passport', 'license', 'licence', 'idcard', 'bankbook'].map(wordKey);
+  // 店名にだけ使わせない名前（銀行・役所などになりすませないように）
+  var ORG_WORDS = ['銀行', '信用金庫', '信金', '郵便局', 'ゆうちょ', '警察', '役所', '役場', '税務署', '年金機構', 'カード会社', '証券'].map(wordKey);
+  var KANJI_DIGITS = '〇一二三四五六七八九';
   function blockedReason(s) {
-    var n = norm(s), compact = n.replace(/\s/g, '');
-    if (/https?|:\/\/|www\.|tel:|mailto:/.test(compact) || RE_DOMAIN.test(n) || RE_DOMAIN.test(compact)) return 'link';
+    var n = norm(s), compact = n.replace(/\s/g, ''), key = wordKey(s);
+    var dotted = compact.replace(/ドット|どっと|\(dot\)|\[dot\]|dot/g, '.');
+    if (/https?|:\/\/|www\.|tel:|mailto:/.test(compact) || RE_DOMAIN.test(n) || RE_DOMAIN.test(compact) || RE_DOMAIN.test(dotted)) return 'link';
+    if (hasWord(key, LEAD_WORDS)) return 'lead';
     if (/@/.test(n)) return 'mail';
-    if (/\+\d[\d\s().\/_\-]{8,}/.test(n)) return 'phone';
-    var runs = n.match(/\d[\d\s().\/_\-]*\d/g) || [];
+    // 漢数字の電話番号（〇九〇 一二三四…）も数字に直してから数える
+    var digits = n.replace(/[〇一二三四五六七八九]/g, function (c) { return String(KANJI_DIGITS.indexOf(c)); });
+    if (/\+\d[\d\s().\/_\-]{8,}/.test(digits)) return 'phone';
+    var runs = digits.match(/\d[\d\s().\/_\-]*\d/g) || [];
     for (var i = 0; i < runs.length; i++) if (runs[i].replace(/\D/g, '').length >= 10) return 'phone';
-    for (var j = 0; j < ID_WORDS.length; j++) if (compact.indexOf(ID_WORDS[j]) >= 0) return 'id';
+    if (hasWord(key, ID_WORDS) || /(^|[^a-z])pin([^a-z]|$)/.test(n)) return 'id';
     return '';
   }
+  function orgName(s) { return hasWord(wordKey(s), ORG_WORDS); }
   var REASON = { link: 'リンク', mail: 'メールアドレス（@）', phone: '電話番号' };
   function popcount(x) { var c = 0; while (x) { c += x & 1; x >>>= 1; } return c; }
   function tipList(b) { return TIPS.filter(function (_, i) { return b & (1 << i); }); }
@@ -203,10 +223,12 @@ var PG = (function () {
       if (cpLen(s) > max) errs.push(label + 'は' + max + '字までです');
       var b = blockedReason(s);
       if (b === 'id') errs.push(label + '：このページでは、身分証やお金に関わる書類の写真はお願いできません');
-      else if (b) errs.push(label + 'に' + REASON[b] + 'は入れられません');
+      else if (b === 'lead') errs.push(label + '：LINE IDやDMなど、送り先を書くことはできません（送り先は、リンクを送るときにお伝えください）');
+      else if (b) errs.push(label + 'に' + REASON[b] + 'らしい文字は入れられません' + (b === 'phone' ? '（型番などの長い数字も止まります）' : ''));
       return s;
     }
     var shop = txt(d.shop, LIM.shop, '店名', true);
+    if (orgName(shop)) errs.push('店名に銀行・役所などの名前は入れられません');
     var task = txt(d.task, LIM.task, '用件', true);
     var photos = [];
     if (!d.photos || !d.photos.length) errs.push('撮ってほしい写真を1枚以上入れてください');
@@ -218,7 +240,10 @@ var PG = (function () {
     });
     var note = txt(d.note, LIM.note, 'ひと言', false);
     if (errs.length) return { cfg: null, errors: errs };
-    return { cfg: { shop: shop, task: task, photos: photos, note: note }, errors: [] };
+    var cfg = { shop: shop, task: task, photos: photos, note: note };
+    // 開く側の上限を超えるリンクは作らせない（絵文字は1字でURLが長くなる）
+    if (encode(cfg).length > HASH_MAX) return { cfg: null, errors: ['文字が多すぎてリンクにできません。絵文字や文を短くしてください'] };
+    return { cfg: cfg, errors: [] };
   }
 
   // 設定 ⇄ URLの # 以降
@@ -239,7 +264,7 @@ var PG = (function () {
   function isStr(v, max, req) { return typeof v === 'string' && cpLen(v) <= max && (!req || v.length > 0) && v === clean(v) && !blockedReason(v); }
   function fromArray(a) {
     if (!Array.isArray(a) || a.length !== 5 || a[0] !== 1) return null;
-    if (!isStr(a[1], LIM.shop, true) || !isStr(a[2], LIM.task, true) || !isStr(a[4], LIM.note)) return null;
+    if (!isStr(a[1], LIM.shop, true) || orgName(a[1]) || !isStr(a[2], LIM.task, true) || !isStr(a[4], LIM.note)) return null;
     var ps = a[3];
     if (!Array.isArray(ps) || ps.length < 1 || ps.length > LIM.photos) return null;
     for (var i = 0; i < ps.length; i++) {
@@ -304,7 +329,9 @@ var PG_FIG = {
 <script id="ui">
 (function () {
   var app = document.getElementById('app');
-  var uid = 0;
+  var uid = 0, fitCurrent = null;
+  // 開く画面の添え文の高さを、画面の幅が変わったときに合わせ直す（いま出ている画面のぶんだけ）
+  window.addEventListener('resize', function () { if (fitCurrent) fitCurrent(); });
   var SVGNS = 'http://www.w3.org/2000/svg';
 
   function h(tag, a, kids) {
@@ -420,12 +447,12 @@ var PG_FIG = {
     });
     box.appendChild(h('div', { class: 'stack' }, [cp]));
     box.appendChild(cpMsg);
-    box.appendChild(h('p', { class: 'small', text: '「撮れた」の印は、このページを閉じると消えます。' }));
+    box.appendChild(h('p', { class: 'small', text: '「撮れた」の印は、タブを閉じると消えます（端末によっては残ることがあります）。' }));
     wrap.appendChild(box);
     refresh();
     root.appendChild(wrap);
     fitHeight();
-    if (!preview) window.addEventListener('resize', fitHeight);
+    if (!preview) fitCurrent = fitHeight;
   }
 
   /* ---------------- 作る画面（お店側） ---------------- */
@@ -445,7 +472,7 @@ var PG_FIG = {
       h('p', { class: 'lead', text: 'お見積もりの前にお客さんに撮ってほしい写真を、見本の図と撮り方のコツつきで順番に並べて、リンクを作ります。お客さんはリンクを見ながら撮り、写真をいつもの方法（LINE・メールなど）で送ります。' }),
       h('ul', { class: 'notes' }, [
         h('li', { text: 'このページは写真を受け取りません。カメラも使いません。' }),
-        h('li', { text: 'お客さんのお名前・住所・電話番号は入れないでください（電話番号・メールアドレス・リンクは入れられないようにしています）。身分証やお金に関わる書類の写真はお願いできません。' }),
+        h('li', { text: 'お客さんのお名前・住所・電話番号は入れないでください。電話番号・メールアドレス・リンク・LINE IDらしい文字と、身分証やお金に関わる書類（免許証・通帳など）の言葉は入れられないようにしています（すべての言い方は防げません）。' }),
         h('li', { text: '入力した内容は、この端末のブラウザで処理し、次回のために端末に残ります。' })
       ])
     ].forEach(function (e) { app.appendChild(e); });
@@ -595,7 +622,7 @@ var PG_FIG = {
     resultBox.appendChild(lenEl); resultBox.appendChild(urlTa);
     resultBox.appendChild(h('div', { class: 'btns' }, [cpBtn, shBtn]));
     resultBox.appendChild(cpMsg);
-    resultBox.appendChild(h('p', { class: 'small', text: 'LINE・メール・DMなど、いつもの連絡手段で送ってください。作ったリンクは保存されません。同じ内容なら、何人に送っても同じリンクで使えます。' }));
+    resultBox.appendChild(h('p', { class: 'small', text: 'LINE・メール・DMなど、いつもの連絡手段で送ってください。リンクそのものは保存しません。同じ内容なら、何人に送っても同じリンクで使えます。' }));
 
     var make = h('button', { type: 'button', class: 'primary', text: 'リンクを作る' });
     make.addEventListener('click', function () {

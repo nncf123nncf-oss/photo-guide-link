@@ -1,4 +1,4 @@
-// Chrome headless を CDP で動かす最小のヘルパー（shoot.js / prep-images.js から使う）
+// Chrome headless を CDP で動かす最小のヘルパー（check.js から使う）
 const fs = require('fs'), path = require('path'), cp = require('child_process'), http = require('http'), os = require('os');
 const CHROME = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'].find(p => fs.existsSync(p));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
