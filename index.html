@@ -89,6 +89,13 @@
   .shot-fig { display: flex; justify-content: center; margin: 8px 0 10px; padding: 6px; border: 1px dashed var(--line); border-radius: 8px; }
   .shot-fig svg.fig { width: 120px; height: 90px; }
   .check { width: 100%; min-height: 52px; font-size: 17px; font-weight: 700; }
+  /* 幅に余裕があるときは、文と「撮れた」を左、図を右に並べてカードを低くする */
+  @media (min-width: 480px) {
+    .shot { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; align-items: start; }
+    .shot-top, .check { grid-column: 1; }
+    .shot-fig { grid-column: 2; grid-row: 1 / span 2; margin: 0; align-self: center; }
+    .check { margin-top: 10px; }
+  }
   .check[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border: 2px solid var(--accent); }
   .safety { border: 1px solid var(--line-strong); border-radius: 8px; padding: 12px; margin: 0 0 14px; background: var(--surface); }
   .safety ul { margin: 0; padding-left: 1.2em; color: var(--ink2); font-size: 15px; }
