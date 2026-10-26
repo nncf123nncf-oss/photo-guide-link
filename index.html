@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>撮ってほしい写真の見本リンク</title>
+<meta name="description" content="お見積もりの前にお客さんに撮ってほしい写真を、見本の図と撮り方のコツつきで順番に並べてリンクにします。写真はこのページでは受け取りません。入力した内容はこの端末のブラウザで処理します。">
+<style>
+  :root {
+    --bg: #faf7ef; --surface: #ffffff; --ink: #221b0c; --ink2: #463c26; --ink3: #5e533b;
+    --line: #e2d9c3; --line-strong: #7a6d4f; --accent: #7A5A00; --accent-ink: #ffffff; --accent-soft: #fbf0cf; --accent-fill: #f2c861;
+    --danger: #a8231b; --danger-soft: #fbe9e7; --notice: #f4efe2; --done: #fff8e3;
+    --font: "Hiragino Sans","Yu Gothic","BIZ UDPGothic","Noto Sans JP",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15130d; --surface: #1f1c13; --ink: #f4eedf; --ink2: #ddd4bd; --ink3: #bdb299;
+      --line: #3a3423; --line-strong: #9a8d6c; --accent: #F2C861; --accent-ink: #241a00; --accent-soft: #3a3013; --accent-fill: #8a6a12;
+      --danger: #ff9a92; --danger-soft: #3a1f1c; --notice: #26221a; --done: #2c2614;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.6; }
+  main { max-width: 1080px; margin: 0 auto; padding: 16px 16px 32px; }
+  h1 { font-size: 22px; line-height: 1.3; margin: 8px 0 8px; }
+  h2 { font-size: 18px; line-height: 1.4; margin: 0 0 10px; overflow-wrap: anywhere; }
+  h3 { font-size: 16px; line-height: 1.4; margin: 0 0 8px; overflow-wrap: anywhere; }
+  p { margin: 0 0 10px; }
+  .lead { color: var(--ink2); }
+  .notes { margin: 0 0 14px; padding-left: 1.2em; color: var(--ink2); font-size: 15px; }
+  .notes li { margin-bottom: 2px; }
+  .small { font-size: 14px; color: var(--ink3); }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; margin-bottom: 14px; min-width: 0; }
+  label.f { display: block; font-weight: 600; margin: 0 0 4px; }
+  .hint { font-weight: 400; color: var(--ink3); font-size: 14px; }
+  input[type=text], select, textarea {
+    display: block; width: 100%; max-width: 100%; min-width: 0; min-height: 44px; font: inherit; font-size: 16px; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 10px; margin: 0 0 10px; -webkit-appearance: none; appearance: none; }
+  select { -webkit-appearance: menulist; appearance: auto; }
+  textarea { resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible, .tip input:focus-visible + span {
+    outline: 3px solid var(--accent); outline-offset: 2px; }
+  button { font: inherit; font-size: 16px; min-height: 44px; min-width: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--line-strong);
+    background: var(--surface); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+  .stack { display: grid; gap: 10px; margin: 0 0 8px; }
+  .stack button { width: 100%; min-height: 52px; font-size: 17px; }
+  .errors { border: 2px solid var(--danger); background: var(--danger-soft); border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; color: var(--ink); }
+  .errors ul { margin: 4px 0 0; padding-left: 1.2em; }
+  .okmsg { color: var(--ink2); font-weight: 600; }
+  .urlbox { font-size: 14px; word-break: break-all; overflow-wrap: anywhere; }
+  .len { font-weight: 700; }
+  /* 図 */
+  svg.fig { display: block; width: 96px; height: 72px; flex: none; }
+  svg.fig .ln { fill: none; stroke: var(--ink2); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  svg.fig .fl { fill: var(--accent-soft); stroke: var(--ink2); stroke-width: 2.2; stroke-linejoin: round; }
+  svg.fig .ac { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  svg.fig .af { fill: var(--accent-fill); stroke: var(--ink2); stroke-width: 2; }
+  /* 作る画面の写真の編集枠 */
+  .row { border: 1px solid var(--line-strong); border-radius: 8px; padding: 12px; margin: 0 0 12px; background: var(--surface); }
+  .row-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 8px; }
+  .row-head h3 { margin: 0; flex: 1 1 auto; }
+  .row-head button { padding: 6px 10px; font-size: 15px; }
+  .row-fig { display: flex; gap: 10px; align-items: center; }
+  .row-fig > div { flex: 1 1 auto; min-width: 0; }
+  .tips { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px; margin: 0 0 4px; padding: 0; border: 0; }
+  .tips legend { font-weight: 600; margin: 0 0 4px; padding: 0; }
+  .tip { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 14px; line-height: 1.35; cursor: pointer; }
+  .tip input { width: 20px; height: 20px; flex: none; margin: 0; accent-color: var(--accent); }
+  .tip.off { opacity: .55; }
+  /* 開く画面 */
+  .view { min-width: 0; }
+  .notice { background: var(--notice); border: 1px solid var(--line-strong); border-left: 6px solid var(--accent); border-radius: 6px; padding: 10px 12px; margin: 0 0 14px; font-size: 14px; color: var(--ink2); }
+  .v-shop { font-size: 14px; font-weight: 700; color: var(--ink3); margin: 0 0 2px; overflow-wrap: anywhere; }
+  .v-task { font-size: 21px; line-height: 1.35; margin: 0 0 6px; overflow-wrap: anywhere; }
+  .v-note { color: var(--ink2); overflow-wrap: anywhere; }
+  .progress { font-size: 17px; font-weight: 800; border: 2px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin: 0 0 12px; background: var(--surface); }
+  .shot { background: var(--surface); border: 2px solid var(--line-strong); border-radius: 10px; padding: 12px; margin: 0 0 12px; }
+  .shot.done { border: 3px solid var(--accent); background: var(--done); }
+  .shot-top { display: flex; gap: 12px; align-items: flex-start; }
+  .num { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .shot-body { flex: 1 1 auto; min-width: 0; }
+  .shot-body h3 { font-size: 18px; margin: 4px 0 6px; }
+  .shot-body ul { margin: 0; padding-left: 1.2em; color: var(--ink2); font-size: 15px; }
+  .shot-fig { display: flex; justify-content: center; margin: 8px 0 10px; padding: 6px; border: 1px dashed var(--line); border-radius: 8px; }
+  .shot-fig svg.fig { width: 120px; height: 90px; }
+  .check { width: 100%; min-height: 52px; font-size: 17px; font-weight: 700; }
+  .check[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border: 2px solid var(--accent); }
+  .safety { border: 1px solid var(--line-strong); border-radius: 8px; padding: 12px; margin: 0 0 14px; background: var(--surface); }
+  .safety ul { margin: 0; padding-left: 1.2em; color: var(--ink2); font-size: 15px; }
+  .msgbox { font-size: 15px; white-space: pre-wrap; }
+  .linklike { background: none; border: 0; color: var(--accent); text-decoration: underline; padding: 8px 0; min-height: 44px; }
+  .mw-footer { box-sizing: border-box; width: 100%; max-width: 100%; margin: 24px 0 0; padding: 16px; background: #F7F7F8;
+    border: 1px solid #D8D8DC; border-radius: 6px; color: #3A3A3E; font-family: system-ui, sans-serif; font-size: 12px; line-height: 1.7; }
+  .mw-footer p { margin: 0 0 6px; } .mw-footer p:last-child { margin-bottom: 0; } .mw-footer a { color: #0B5AA6; display: inline-block; padding: 13px 0; }
+  @media (min-width: 880px) {
+    .layout { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+    .sticky { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+    .viewpage { max-width: 560px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div id="app"></div>
+  <footer class="mw-footer">
+    <p>みちAIワークス（MICHI AI WORKS）／代表 田中　泉</p>
+    <p>運営: <a href="https://michi-portfolio.vercel.app/" rel="noopener">みちAIワークス 公式サイト</a>（https://michi-portfolio.vercel.app/ ）／ お問い合わせ: <a href="mailto:nncf123nncf@gmail.com">nncf123nncf@gmail.com</a></p>
+    <p>入力した内容は、お使いの端末のブラウザで処理します。このページは写真を受け取りません。カメラも使いません。リンクの画面は、リンクを作ったお店が入力した内容を表示するだけで、当サイトは内容の確認や保証をしていません。アクセス解析（Cloudflare Web Analytics）で、ページの閲覧状況（閲覧数・参照元・ブラウザの種類など）を計測しています。</p>
+    <p>ログイン・会員登録・パスワードの入力を求めることはありません。</p>
+  </footer>
+</main>
+
+<script id="core">
+var PG = (function () {
+  var KEY = 'photo-guide-link-v1', CHECK_KEY = 'photo-guide-link-checks-v1';
+  var LIM = { shop: 30, task: 24, what: 24, note: 80, photos: 6, tips: 3 };
+  var HASH_MAX = 1500;
+  // 撮り方のコツ（ビットの位置＝配列の番号）
+  var TIPS = ['明るい所で', '全体が入るまで離れて', '文字が読めるまで近づいて', '手や定規を横に置いて大きさが分かるように', '斜めから（光の反射をよける）', '横向きで'];
+  // 見本の図（id 1〜8）
+  var FIGS = ['', '全体', '正面から', '横・裏', '型番シール', '気になる所のアップ', '周りの様子', '大きさが分かるように', '付属品・箱'];
+  function bits(list) { return list.reduce(function (a, i) { return a | (1 << i); }, 0); }
+  // ひな形（[図id, 何を撮るか, コツのビット]）
+  var PRESETS = [
+    { id: 'repair', name: '家電・設備の修理', photos: [[1, '本体の全体', bits([1, 0])], [4, '本体の型番シール', bits([2, 4])], [5, '気になる所のアップ', bits([0])], [6, '置いてある場所の様子', bits([1])]] },
+    { id: 'water', name: '水まわり', photos: [[1, '気になる所の全体', bits([1, 0])], [5, '水もれや汚れのアップ', bits([0])], [4, '蛇口や機器の型番シール', bits([2, 4])], [6, '床や壁など周りの様子', bits([1])]] },
+    { id: 'clean', name: 'お掃除・片付け', photos: [[1, 'お部屋の全体', bits([1, 5])], [5, '特に気になる汚れのアップ', bits([0])], [6, '入口から見た様子', bits([1])]] },
+    { id: 'pickup', name: '不用品の引き取り', photos: [[1, '引き取ってほしい物の全体', bits([1])], [7, '大きさが分かる写真', bits([3])], [4, '家電なら型番シール', bits([2])], [6, '運び出す通路や階段', bits([1])]] },
+    { id: 'furniture', name: '家具の修理', photos: [[1, '家具の全体', bits([1, 0])], [5, '傷や壊れた所のアップ', bits([0, 4])], [7, '傷の大きさが分かる写真', bits([3])], [3, '裏側や脚の様子', bits([0])]] }
+  ];
+
+  function clean(s) { return String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function cpLen(s) { return Array.from(s).length; }
+  function norm(s) {
+    return String(s).normalize('NFKC').toLowerCase()
+      .replace(/[\u00ad\u200b-\u200f\u2060-\u2064\ufeff]/g, '')
+      .replace(/[\u2010-\u2015\u2212\u30fc\uff70]/g, '-').replace(/[。｡]/g, '.');
+  }
+  // リンク・メールアドレス・電話番号らしい文字を見つける（送り先を別の所へ誘導させない）。Day077と同じ規則
+  var TLD = '(?:com|net|org|jp|me|io|co|info|biz|xyz|app|dev|link|page|shop|site|online|tokyo|ly|gl|to|cc|tv|us|uk|ne|or|ac|go)';
+  var RE_DOMAIN = new RegExp('[^\\s.]+\\.' + TLD + '(?![a-z])');
+  // 身分証・お金に関わる書類の写真を求める文に使わせない。長音は norm で '-' になるので、比べる側も同じ形にする
+  var ID_WORDS = ['免許証', '保険証', 'マイナンバー', '個人番号', '通帳', 'キャッシュカード', 'クレジットカード', 'パスポート', '暗証番号', '本人確認', '身分証', '在留カード', 'カード番号', '印鑑証明'].map(norm);
+  function blockedReason(s) {
+    var n = norm(s), compact = n.replace(/\s/g, '');
+    if (/https?|:\/\/|www\.|tel:|mailto:/.test(compact) || RE_DOMAIN.test(n) || RE_DOMAIN.test(compact)) return 'link';
+    if (/@/.test(n)) return 'mail';
+    if (/\+\d[\d\s().\/_\-]{8,}/.test(n)) return 'phone';
+    var runs = n.match(/\d[\d\s().\/_\-]*\d/g) || [];
+    for (var i = 0; i < runs.length; i++) if (runs[i].replace(/\D/g, '').length >= 10) return 'phone';
+    for (var j = 0; j < ID_WORDS.length; j++) if (compact.indexOf(ID_WORDS[j]) >= 0) return 'id';
+    return '';
+  }
+  var REASON = { link: 'リンク', mail: 'メールアドレス（@）', phone: '電話番号' };
+  function popcount(x) { var c = 0; while (x) { c += x & 1; x >>>= 1; } return c; }
+  function tipList(b) { return TIPS.filter(function (_, i) { return b & (1 << i); }); }
+
+  function blankPhoto() { return { fig: 1, what: '', tips: 0 }; }
+  function emptyDraft() { return { shop: '', task: '', note: '', photos: [blankPhoto()] }; }
+  function presetPhotos(id) {
+    var p = PRESETS.filter(function (x) { return x.id === id; })[0];
+    return p ? p.photos.map(function (a) { return { fig: a[0], what: a[1], tips: a[2] }; }) : [blankPhoto()];
+  }
+  function sampleDraft() {
+    return { shop: 'サンプル電器サービス', task: 'エアコン修理のお見積もり', note: '分かる範囲で大丈夫です', photos: [
+      { fig: 1, what: '本体の全体', tips: bits([1, 0]) },
+      { fig: 4, what: '本体の右側にある型番シール', tips: bits([2, 4]) },
+      { fig: 5, what: '水が垂れている所のアップ', tips: bits([0]) },
+      { fig: 6, what: '室外機の全体と置き場所', tips: bits([1]) }
+    ] };
+  }
+  function sanitizeDraft(o) {
+    var d = emptyDraft();
+    if (!o || typeof o !== 'object') return d;
+    ['shop', 'task', 'note'].forEach(function (k) { if (typeof o[k] === 'string') d[k] = o[k].slice(0, 300); });
+    if (Array.isArray(o.photos) && o.photos.length) {
+      d.photos = o.photos.slice(0, LIM.photos).map(function (p) {
+        var q = blankPhoto();
+        if (p && typeof p === 'object') {
+          if (Number.isInteger(p.fig) && p.fig >= 1 && p.fig <= 8) q.fig = p.fig;
+          if (typeof p.what === 'string') q.what = p.what.slice(0, 100);
+          if (Number.isInteger(p.tips) && p.tips >= 0 && p.tips < 64 && popcount(p.tips) <= LIM.tips) q.tips = p.tips;
+        }
+        return q;
+      });
+    }
+    return d;
+  }
+  // 下書きに中身があるか（ひな形の選び直しで消してよいかの確認に使う）
+  function hasPhotoText(d) { return d.photos.some(function (p) { return clean(p.what) !== ''; }); }
+
+  // 入力 → 設定。外れた点は日本語の文で errors に入れる
+  function toConfig(d) {
+    var errs = [];
+    function txt(v, max, label, req) {
+      var s = clean(v);
+      if (req && !s) errs.push(label + 'を入れてください');
+      if (cpLen(s) > max) errs.push(label + 'は' + max + '字までです');
+      var b = blockedReason(s);
+      if (b === 'id') errs.push(label + '：このページでは、身分証やお金に関わる書類の写真はお願いできません');
+      else if (b) errs.push(label + 'に' + REASON[b] + 'は入れられません');
+      return s;
+    }
+    var shop = txt(d.shop, LIM.shop, '店名', true);
+    var task = txt(d.task, LIM.task, '用件', true);
+    var photos = [];
+    if (!d.photos || !d.photos.length) errs.push('撮ってほしい写真を1枚以上入れてください');
+    else if (d.photos.length > LIM.photos) errs.push('撮ってほしい写真は' + LIM.photos + '枚までです');
+    else d.photos.forEach(function (p, i) {
+      var w = txt(p.what, LIM.what, '写真' + (i + 1) + 'の「何を撮るか」', true);
+      if (popcount(p.tips) > LIM.tips) errs.push('写真' + (i + 1) + 'のコツは' + LIM.tips + 'つまでです');
+      photos.push([p.fig, w, p.tips]);
+    });
+    var note = txt(d.note, LIM.note, 'ひと言', false);
+    if (errs.length) return { cfg: null, errors: errs };
+    return { cfg: { shop: shop, task: task, photos: photos, note: note }, errors: [] };
+  }
+
+  // 設定 ⇄ URLの # 以降
+  function b64urlEncode(str) {
+    var bytes = new TextEncoder().encode(str), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlDecode(s) {
+    var b = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    var bin = atob(b), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  }
+  function encode(c) { return 'v1=' + b64urlEncode(JSON.stringify([1, c.shop, c.task, c.photos, c.note])); }
+  function makeUrl(base, c) { return base + '#' + encode(c); }
+  function isStr(v, max, req) { return typeof v === 'string' && cpLen(v) <= max && (!req || v.length > 0) && v === clean(v) && !blockedReason(v); }
+  function fromArray(a) {
+    if (!Array.isArray(a) || a.length !== 5 || a[0] !== 1) return null;
+    if (!isStr(a[1], LIM.shop, true) || !isStr(a[2], LIM.task, true) || !isStr(a[4], LIM.note)) return null;
+    var ps = a[3];
+    if (!Array.isArray(ps) || ps.length < 1 || ps.length > LIM.photos) return null;
+    for (var i = 0; i < ps.length; i++) {
+      var p = ps[i];
+      if (!Array.isArray(p) || p.length !== 3) return null;
+      if (!Number.isInteger(p[0]) || p[0] < 1 || p[0] > 8) return null;
+      if (!isStr(p[1], LIM.what, true)) return null;
+      if (!Number.isInteger(p[2]) || p[2] < 0 || p[2] > 63 || popcount(p[2]) > LIM.tips) return null;
+    }
+    return { shop: a[1], task: a[2], photos: ps.map(function (p) { return [p[0], p[1], p[2]]; }), note: a[4] };
+  }
+  function decodeHash(h) {
+    try {
+      h = String(h == null ? '' : h).replace(/^#/, '');
+      if (h.length > HASH_MAX) return null;
+      var m = /^v1=([A-Za-z0-9_-]+)$/.exec(h);
+      if (!m) return null;
+      return fromArray(JSON.parse(b64urlDecode(m[1])));
+    } catch (e) { return null; }
+  }
+
+  // 送るときの添え文。印が1つもないときは、印を使っていないとみなして全部をそのまま並べる
+  function message(c, checked) {
+    var n = 0, used = false;
+    c.photos.forEach(function (_, i) { if (checked && checked[i]) { n++; used = true; } });
+    var L = [used ? '写真を' + n + '枚お送りします' : '写真をお送りします'];
+    c.photos.forEach(function (p, i) { L.push((i + 1) + ' ' + p[1] + (used && !checked[i] ? '（撮れませんでした）' : '')); });
+    return L.join('\n');
+  }
+  function hash32(s) { var h = 0x811c9dc5; var b = new TextEncoder().encode(s); for (var i = 0; i < b.length; i++) { h ^= b[i]; h = Math.imul(h, 0x01000193) >>> 0; } return ('0000000' + h.toString(16)).slice(-8); }
+  // 撮れたの印の保存先（リンクの中身ごとに分ける＝別のリンクに引き継がない）
+  function checkKey(c) { return CHECK_KEY + '-' + hash32(encode(c)); }
+  function parseChecks(s, len) {
+    try { var a = JSON.parse(s); if (Array.isArray(a) && a.length === len && a.every(function (x) { return x === 0 || x === 1; })) return a.map(Boolean); } catch (e) { }
+    return null;
+  }
+
+  return {
+    KEY: KEY, LIM: LIM, TIPS: TIPS, FIGS: FIGS, PRESETS: PRESETS, HASH_MAX: HASH_MAX,
+    clean: clean, cpLen: cpLen, blockedReason: blockedReason, popcount: popcount, tipList: tipList, bits: bits,
+    blankPhoto: blankPhoto, emptyDraft: emptyDraft, presetPhotos: presetPhotos, sampleDraft: sampleDraft, sanitizeDraft: sanitizeDraft, hasPhotoText: hasPhotoText,
+    toConfig: toConfig, encode: encode, makeUrl: makeUrl, decodeHash: decodeHash, message: message, checkKey: checkKey, parseChecks: parseChecks
+  };
+})();
+if (typeof module !== 'undefined') module.exports = PG;
+</script>
+
+<script id="figs">
+// 見本の図（同梱の固定文字列だけ。利用者の文字は入れない）。viewBox 96×72
+var PG_FIG = {
+  1: '<rect class="fl" x="26" y="20" width="44" height="32" rx="3"/><path class="ln" d="M34 46h28"/><path class="ac" d="M8 16V8h8M80 8h8v8M88 56v8h-8M16 64H8v-8"/>',
+  2: '<rect class="fl" x="28" y="16" width="40" height="34" rx="3"/><path class="ln" d="M34 24h28M34 30h28M34 36h28"/><path class="ln" d="M34 50v8M62 50v8M24 58h48"/>',
+  3: '<path class="fl" d="M20 24l26-10 30 10v30l-30 10-26-10z"/><path class="af" d="M46 34l30-10v30l-30 10z"/><path class="ln" d="M20 24l26 10 30-10M46 34v30"/>',
+  4: '<rect class="fl" x="8" y="12" width="50" height="46" rx="3"/><rect class="af" x="30" y="20" width="20" height="13" rx="1"/><path class="ln" d="M33 25h14M33 29h9"/><circle class="ac" cx="66" cy="42" r="13"/><path class="ac" d="M75 51l12 12"/>',
+  5: '<rect class="fl" x="8" y="12" width="56" height="48" rx="3"/><path class="ln" d="M24 40l6-6 5 5 7-8 5 4"/><circle class="ac" cx="36" cy="36" r="16" stroke-dasharray="5 4"/><path class="ac" d="M50 26l26-12M76 14h10v10"/>',
+  6: '<path class="ln" d="M8 8v48l18 8M88 8v48l-18 8M26 64h44"/><rect class="fl" x="36" y="30" width="24" height="24" rx="2"/><path class="ac" d="M12 42h18M84 42H66M12 42l5-4M12 42l5 4M84 42l-5-4M84 42l-5 4"/>',
+  7: '<rect class="fl" x="10" y="14" width="42" height="40" rx="3"/><rect class="af" x="60" y="10" width="14" height="52" rx="2"/><path class="ln" d="M60 18h6M60 26h4M60 34h6M60 42h4M60 50h6"/><path class="ac" d="M10 62h42M10 59v6M52 59v6"/>',
+  8: '<rect class="fl" x="10" y="30" width="30" height="26" rx="2"/><path class="ln" d="M10 38h30M25 30v8"/><rect class="fl" x="46" y="38" width="22" height="18" rx="2"/><path class="ac" d="M72 50c8 0 10-10 4-14s-2-14 8-16"/>'
+};
+</script>
+
+<script id="ui">
+(function () {
+  var app = document.getElementById('app');
+  var uid = 0;
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  function h(tag, a, kids) {
+    var e = document.createElement(tag);
+    if (a) Object.keys(a).forEach(function (k) {
+      var v = a[k];
+      if (v == null || v === false) return;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else if (v === true) e.setAttribute(k, '');
+      else e.setAttribute(k, v);
+    });
+    (kids || []).forEach(function (c) { if (c != null) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function fig(id) {
+    var s = document.createElementNS(SVGNS, 'svg');
+    s.setAttribute('viewBox', '0 0 96 72'); s.setAttribute('class', 'fig'); s.setAttribute('aria-hidden', 'true'); s.setAttribute('focusable', 'false');
+    s.innerHTML = PG_FIG[id] || PG_FIG[1]; // 固定の図だけ（利用者の文字は入らない）
+    return s;
+  }
+  function baseUrl() { return location.href.split('#')[0].split('?')[0]; }
+
+  function copyText(text, done) {
+    function fallback() {
+      var ok = false;
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+        document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+        ok = document.execCommand('copy'); document.body.removeChild(ta);
+      } catch (e) { ok = false; }
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { navigator.clipboard.writeText(text).then(function () { done(true); }, fallback); } catch (e) { fallback(); }
+    } else fallback();
+  }
+  function selectAll(ta) { try { ta.focus(); ta.select(); ta.setSelectionRange(0, ta.value.length); } catch (e) { } }
+
+  /* ---------------- 開く画面（お客さん側・プレビュー兼用） ---------------- */
+  function renderView(root, cfg, preview) {
+    root.textContent = '';
+    var key = PG.checkKey(cfg), checked = null;
+    if (!preview) { try { checked = PG.parseChecks(sessionStorage.getItem(key), cfg.photos.length); } catch (e) { } }
+    if (!checked) checked = cfg.photos.map(function () { return false; });
+    function store() { if (preview) return; try { sessionStorage.setItem(key, JSON.stringify(checked.map(function (x) { return x ? 1 : 0; }))); } catch (e) { } }
+
+    var wrap = h('div', { class: 'view' });
+    wrap.appendChild(h('div', { class: 'notice', text: 'この画面の内容は、リンクを作ったお店が入力したものです。当サイトはお店とは無関係で、内容の確認もしていません。このページは写真を受け取りません。写真はいつもの方法（LINE・メールなど）でお店に送ってください。お金の振込先や個人情報を入力する画面ではありません。' }));
+    wrap.appendChild(h('p', { class: 'v-shop', text: cfg.shop }));
+    wrap.appendChild(h('h2', { class: 'v-task', text: cfg.task }));
+    wrap.appendChild(h('p', { text: '撮ってほしい写真 ' + cfg.photos.length + '枚。図は撮り方の目安です。撮れたら「撮れた」を押してください。' }));
+    if (cfg.note) wrap.appendChild(h('p', { class: 'v-note', text: cfg.note }));
+    var prog = h('p', { class: 'progress', role: 'status' });
+    wrap.appendChild(prog);
+
+    var msgTa = h('textarea', { readonly: true, class: 'msgbox', 'aria-label': '送るときの添え文' });
+    function refresh() {
+      var n = checked.filter(Boolean).length;
+      prog.textContent = cfg.photos.length + '枚中' + n + '枚 撮れました';
+      msgTa.value = PG.message(cfg, checked);
+      fitHeight();
+    }
+    // 添え文は折り返しても全部見えるよう、中身の高さに合わせる（画面に置かれる前は測れないので、置いたあとにも呼ぶ）
+    function fitHeight() { msgTa.rows = cfg.photos.length + 1; if (msgTa.isConnected) { msgTa.style.height = 'auto'; msgTa.style.height = (msgTa.scrollHeight + 4) + 'px'; } }
+    cfg.photos.forEach(function (p, i) {
+      var card = h('section', { class: 'shot', 'aria-label': '写真' + (i + 1) });
+      var tips = PG.tipList(p[2]);
+      card.appendChild(h('div', { class: 'shot-top' }, [
+        h('div', { class: 'num', 'aria-hidden': 'true', text: String(i + 1) }),
+        h('div', { class: 'shot-body' }, [
+          h('h3', { text: p[1] }),
+          tips.length ? h('ul', null, tips.map(function (t) { return h('li', { text: t }); })) : null
+        ])
+      ]));
+      card.appendChild(h('div', { class: 'shot-fig' }, [fig(p[0])]));
+      var btn = h('button', { type: 'button', class: 'check' });
+      function paint() {
+        btn.setAttribute('aria-pressed', checked[i] ? 'true' : 'false');
+        btn.textContent = checked[i] ? '✓ 撮れた（押すと戻せます）' : '撮れた';
+        card.classList.toggle('done', !!checked[i]);
+      }
+      btn.addEventListener('click', function () { checked[i] = !checked[i]; paint(); store(); refresh(); });
+      paint();
+      card.appendChild(btn);
+      wrap.appendChild(card);
+    });
+
+    wrap.appendChild(h('div', { class: 'safety' }, [
+      h('h3', { text: '撮るとき・送る前に' }),
+      h('ul', null, [
+        h('li', { text: '高い所・狭い所・ベランダの外側など、危ない場所では撮らないでください。' }),
+        h('li', { text: 'ご家族の顔・郵便物の宛名・鍵の番号などが写り込んでいないか、送る前にご確認ください。' }),
+        h('li', { text: '写真に撮った場所の情報（位置情報）が入っていることがあります。気になる場合は、送る前にスマホの設定をご確認ください。' })
+      ])
+    ]));
+
+    var box = h('div', { class: 'panel' });
+    box.appendChild(h('h3', { text: '写真を送るときの添え文' }));
+    box.appendChild(h('p', { class: 'small', text: '写真といっしょに送ると、お店がどの写真か分かります。このページからは送りません。' }));
+    box.appendChild(msgTa);
+    var cpMsg = h('p', { class: 'okmsg', role: 'status' });
+    var cp = h('button', { type: 'button', class: 'primary', text: '添え文をコピー' });
+    cp.addEventListener('click', function () {
+      if (preview) { cpMsg.textContent = 'プレビューではコピーしません。'; return; }
+      copyText(msgTa.value, function (ok) {
+        if (ok) cpMsg.textContent = 'コピーしました。LINEなどで、写真といっしょに貼り付けて送ってください。';
+        else { cpMsg.textContent = 'コピーできませんでした。上の文を長押しして、コピーしてください。'; selectAll(msgTa); }
+      });
+    });
+    box.appendChild(h('div', { class: 'stack' }, [cp]));
+    box.appendChild(cpMsg);
+    box.appendChild(h('p', { class: 'small', text: '「撮れた」の印は、このページを閉じると消えます。' }));
+    wrap.appendChild(box);
+    refresh();
+    root.appendChild(wrap);
+    fitHeight();
+    if (!preview) window.addEventListener('resize', fitHeight);
+  }
+
+  /* ---------------- 作る画面（お店側） ---------------- */
+  var storageOk = (function () { try { localStorage.setItem(PG.KEY + '-probe', '1'); localStorage.removeItem(PG.KEY + '-probe'); return true; } catch (e) { return false; } })();
+  function loadDraft() {
+    try { var s = localStorage.getItem(PG.KEY); if (s) return PG.sanitizeDraft(JSON.parse(s)); } catch (e) { }
+    return PG.emptyDraft();
+  }
+  function saveDraft(d) { try { localStorage.setItem(PG.KEY, JSON.stringify(d)); } catch (e) { storageOk = false; } }
+
+  function renderMake() {
+    document.title = '撮ってほしい写真の見本リンク';
+    app.textContent = '';
+    var draft = loadDraft(), showErrors = false, timer = null;
+    [
+      h('h1', { text: '撮ってほしい写真の見本リンク' }),
+      h('p', { class: 'lead', text: 'お見積もりの前にお客さんに撮ってほしい写真を、見本の図と撮り方のコツつきで順番に並べて、リンクを作ります。お客さんはリンクを見ながら撮り、写真をいつもの方法（LINE・メールなど）で送ります。' }),
+      h('ul', { class: 'notes' }, [
+        h('li', { text: 'このページは写真を受け取りません。カメラも使いません。' }),
+        h('li', { text: 'お客さんのお名前・住所・電話番号は入れないでください（電話番号・メールアドレス・リンクは入れられないようにしています）。身分証やお金に関わる書類の写真はお願いできません。' }),
+        h('li', { text: '入力した内容は、この端末のブラウザで処理し、次回のために端末に残ります。' })
+      ])
+    ].forEach(function (e) { app.appendChild(e); });
+    if (!storageOk) app.appendChild(h('div', { class: 'errors', text: 'この端末では入力を保存できません。ページを閉じると入力が消えます。' }));
+
+    var layout = h('div', { class: 'layout' }), left = h('div'), right = h('div', { class: 'sticky' });
+    layout.appendChild(left); layout.appendChild(right); app.appendChild(layout);
+    var errBox = h('div', { class: 'errors', role: 'alert' }); errBox.hidden = true;
+    var resultBox = h('div', { class: 'panel' }); resultBox.hidden = true;
+    var pvRoot = h('div');
+
+    function changed() {
+      saveDraft(draft);
+      resultBox.hidden = true;
+      if (showErrors) refreshErrors();
+      clearTimeout(timer); timer = setTimeout(renderPreview, 150);
+    }
+    function refreshErrors() {
+      var r = PG.toConfig(draft);
+      errBox.textContent = '';
+      if (r.errors.length) {
+        errBox.hidden = false;
+        errBox.appendChild(h('strong', { text: '次の点を直してください' }));
+        errBox.appendChild(h('ul', null, r.errors.map(function (m) { return h('li', { text: m }); })));
+      } else errBox.hidden = true;
+      return r;
+    }
+    function renderPreview() {
+      var r = PG.toConfig(draft);
+      pvRoot.textContent = '';
+      if (!r.cfg) { pvRoot.appendChild(h('p', { class: 'small', text: '入力が整うと、ここにお客さんから見える画面が出ます。' + (r.errors.length ? '（いまの状態: ' + r.errors[0] + '）' : '') })); return; }
+      var inner = h('div'); pvRoot.appendChild(inner); renderView(inner, r.cfg, true);
+    }
+    function textField(obj, key, label, hint, max, ph) {
+      var id = 'f' + (++uid);
+      var input = h('input', { type: 'text', id: id, maxlength: max, autocomplete: 'off', placeholder: ph || null });
+      input.value = obj[key];
+      input.addEventListener('input', function () { obj[key] = input.value; changed(); });
+      return h('div', null, [h('label', { class: 'f', for: id }, [label, hint ? h('span', { class: 'hint', text: ' ' + hint }) : null]), input]);
+    }
+
+    left.appendChild(h('div', { class: 'btns' }, [
+      h('button', { type: 'button', text: 'サンプルを入れる', onclick: function () {
+        if ((PG.clean(draft.shop) || PG.hasPhotoText(draft)) && !confirm('いまの入力を、サンプルに置き換えます。よろしいですか？')) return;
+        draft = PG.sampleDraft(); buildForm(); changed();
+      } }),
+      h('button', { type: 'button', text: '入力を空にする', onclick: function () {
+        if (!confirm('入力をすべて消します。よろしいですか？')) return;
+        draft = PG.emptyDraft(); showErrors = false; errBox.hidden = true; buildForm(); changed();
+      } })
+    ]));
+    var form = h('div', { class: 'panel' }), photosBox = h('div');
+    left.appendChild(form);
+
+    function buildForm() {
+      form.textContent = '';
+      form.appendChild(textField(draft, 'shop', '店名', '（30字まで）', PG.LIM.shop));
+      form.appendChild(textField(draft, 'task', '用件', '（24字まで）', PG.LIM.task, '例 エアコン修理のお見積もり'));
+      var pid = 'f' + (++uid);
+      var pre = h('select', { id: pid });
+      pre.appendChild(h('option', { value: '', text: '選ぶと下の写真が埋まります' }));
+      PG.PRESETS.forEach(function (p) { pre.appendChild(h('option', { value: p.id, text: p.name })); });
+      pre.appendChild(h('option', { value: 'blank', text: '白紙から' }));
+      pre.addEventListener('change', function () {
+        var v = pre.value; if (!v) return;
+        if (PG.hasPhotoText(draft) && !confirm('いまの写真の並びは消えます。よろしいですか？')) { pre.value = ''; return; }
+        draft.photos = PG.presetPhotos(v); pre.value = ''; buildPhotos(); changed();
+      });
+      form.appendChild(h('div', null, [h('label', { class: 'f', for: pid }, ['ひな形から始める', h('span', { class: 'hint', text: ' （任意・あとから全部直せます）' })]), pre]));
+      form.appendChild(h('h2', { text: '撮ってほしい写真（' + PG.LIM.photos + '枚まで）' }));
+      form.appendChild(photosBox);
+      buildPhotos();
+      form.appendChild(textField(draft, 'note', 'ひと言', '（任意・80字まで）', PG.LIM.note, '例 分かる範囲で大丈夫です'));
+      form.appendChild(h('p', { class: 'small', text: 'リンク・メールアドレス・電話番号は入れられません。' }));
+    }
+    function buildPhotos() {
+      photosBox.textContent = '';
+      var n = draft.photos.length;
+      draft.photos.forEach(function (p, i) {
+        var row = h('div', { class: 'row' });
+        // 並べ替えたあとは、動かした写真の同じボタンにフォーカスを移す（押せなくなったら反対のボタン）
+        function move(d) {
+          var t = draft.photos[i]; draft.photos[i] = draft.photos[i + d]; draft.photos[i + d] = t; buildPhotos(); changed();
+          var b = photosBox.querySelectorAll('.row')[i + d]; if (!b) return;
+          var btns = b.querySelectorAll('.row-head button'), want = btns[d < 0 ? 0 : 1], other = btns[d < 0 ? 1 : 0];
+          (want && !want.disabled ? want : other).focus();
+          if (b.scrollIntoView) b.scrollIntoView({ block: 'nearest' });
+        }
+        row.appendChild(h('div', { class: 'row-head' }, [
+          h('h3', { text: '写真' + (i + 1) }),
+          h('button', { type: 'button', 'aria-label': '写真' + (i + 1) + 'を上へ', text: '上へ', disabled: i === 0, onclick: function () { move(-1); } }),
+          h('button', { type: 'button', 'aria-label': '写真' + (i + 1) + 'を下へ', text: '下へ', disabled: i === n - 1, onclick: function () { move(1); } }),
+          h('button', { type: 'button', 'aria-label': '写真' + (i + 1) + 'を消す', text: '消す', disabled: n === 1, onclick: function () {
+            if (PG.clean(p.what) && !confirm('写真' + (i + 1) + 'を消します。よろしいですか？')) return;
+            draft.photos.splice(i, 1); buildPhotos(); changed();
+          } })
+        ]));
+        var sid = 'f' + (++uid), sel = h('select', { id: sid });
+        PG.FIGS.forEach(function (name, id) { if (id) sel.appendChild(h('option', { value: String(id), text: id + ' ' + name })); });
+        sel.value = String(p.fig);
+        var figWrap = h('span');
+        figWrap.appendChild(fig(p.fig));
+        sel.addEventListener('change', function () { p.fig = +sel.value; figWrap.textContent = ''; figWrap.appendChild(fig(p.fig)); changed(); });
+        row.appendChild(h('div', { class: 'row-fig' }, [figWrap, h('div', null, [h('label', { class: 'f', for: sid, text: '見本の図' }), sel])]));
+        row.appendChild(textField(p, 'what', '何を撮るか', '（24字まで）', PG.LIM.what, '例 本体の型番シール'));
+        var fs = h('fieldset', { class: 'tips' }, [h('legend', null, ['撮り方のコツ', h('span', { class: 'hint', text: ' （' + PG.LIM.tips + 'つまで）' })])]);
+        var boxes = [];
+        function paintTips() {
+          var full = PG.popcount(p.tips) >= PG.LIM.tips;
+          boxes.forEach(function (b, k) { var on = !!(p.tips & (1 << k)); b.input.checked = on; b.input.disabled = full && !on; b.label.classList.toggle('off', full && !on); });
+        }
+        PG.TIPS.forEach(function (t, k) {
+          var input = h('input', { type: 'checkbox' });
+          var label = h('label', { class: 'tip' }, [input, h('span', { text: t })]);
+          input.addEventListener('change', function () { p.tips = input.checked ? (p.tips | (1 << k)) : (p.tips & ~(1 << k)); paintTips(); changed(); });
+          boxes.push({ input: input, label: label });
+          fs.appendChild(label);
+        });
+        paintTips();
+        row.appendChild(fs);
+        photosBox.appendChild(row);
+      });
+      if (n < PG.LIM.photos) photosBox.appendChild(h('div', { class: 'btns' }, [h('button', { type: 'button', text: '＋ 写真を足す', onclick: function () {
+        draft.photos.push(PG.blankPhoto()); buildPhotos(); changed();
+        var rows = photosBox.querySelectorAll('.row'), last = rows[rows.length - 1]; if (last) { var f = last.querySelector('input[type=text]'); if (f) f.focus(); }
+      } })]));
+    }
+    buildForm();
+
+    var lenEl = h('p', { class: 'len' }), urlTa = h('textarea', { readonly: true, rows: 4, class: 'urlbox', 'aria-label': '共有用URL' });
+    var cpBtn = h('button', { type: 'button', class: 'primary', text: 'URLをコピー' });
+    var shBtn = h('button', { type: 'button', text: '共有' });
+    var cpMsg = h('p', { class: 'okmsg', role: 'status' });
+    shBtn.hidden = typeof navigator.share !== 'function';
+    var curUrl = '';
+    cpBtn.addEventListener('click', function () {
+      copyText(curUrl, function (ok) {
+        if (ok) cpMsg.textContent = 'コピーしました。お客さんに送ってください。';
+        else { cpMsg.textContent = 'コピーできませんでした。上のURLを長押しして、コピーしてください。'; selectAll(urlTa); }
+      });
+    });
+    shBtn.addEventListener('click', function () {
+      var p; try { p = navigator.share({ url: curUrl }); } catch (e) { cpMsg.textContent = '共有できませんでした。URLをコピーしてください。'; return; }
+      if (p && p.catch) p.catch(function (e) { if (!e || e.name !== 'AbortError') cpMsg.textContent = '共有できませんでした。URLをコピーしてください。'; });
+    });
+    resultBox.appendChild(h('h3', { text: 'お客さんに送るリンク' }));
+    resultBox.appendChild(lenEl); resultBox.appendChild(urlTa);
+    resultBox.appendChild(h('div', { class: 'btns' }, [cpBtn, shBtn]));
+    resultBox.appendChild(cpMsg);
+    resultBox.appendChild(h('p', { class: 'small', text: 'LINE・メール・DMなど、いつもの連絡手段で送ってください。作ったリンクは保存されません。同じ内容なら、何人に送っても同じリンクで使えます。' }));
+
+    var make = h('button', { type: 'button', class: 'primary', text: 'リンクを作る' });
+    make.addEventListener('click', function () {
+      showErrors = true;
+      var r = refreshErrors();
+      if (!r.cfg) { resultBox.hidden = true; if (errBox.scrollIntoView) errBox.scrollIntoView({ block: 'nearest' }); return; }
+      curUrl = PG.makeUrl(baseUrl(), r.cfg);
+      lenEl.textContent = 'URLの長さ: ' + Array.from(curUrl).length + '文字';
+      urlTa.value = curUrl; cpMsg.textContent = '';
+      resultBox.hidden = false;
+      if (resultBox.scrollIntoView) resultBox.scrollIntoView({ block: 'nearest' });
+    });
+    left.appendChild(h('div', { class: 'btns' }, [make]));
+    left.appendChild(errBox);
+    right.appendChild(resultBox);
+    right.appendChild(h('h2', { text: 'お客さんにはこう見えます（プレビュー）' }));
+    right.appendChild(h('p', { class: 'small', text: 'プレビューの「撮れた」は試しに押せますが、残りません。' }));
+    right.appendChild(pvRoot);
+    renderPreview();
+  }
+
+  /* ---------------- リンクを開いたとき ---------------- */
+  function renderViewPage(cfg) {
+    document.title = cfg.task + '｜撮ってほしい写真';
+    app.textContent = '';
+    var page = h('div', { class: 'viewpage' }); app.appendChild(page);
+    var root = h('div'); page.appendChild(root);
+    renderView(root, cfg, false);
+    page.appendChild(h('button', { type: 'button', class: 'linklike', text: '自分のお店用の写真の見本リンクを作る', onclick: goMake }));
+  }
+  function renderBroken() {
+    document.title = '撮ってほしい写真の見本リンク';
+    app.textContent = '';
+    app.appendChild(h('h1', { text: 'リンクを開けませんでした' }));
+    app.appendChild(h('div', { class: 'errors', text: 'リンクが壊れているか、対応していない形式です。リンクを送ってくれたお店に、もう一度確認してください。' }));
+    app.appendChild(h('button', { type: 'button', text: '写真の見本リンクを作る画面へ', onclick: goMake }));
+  }
+  function goMake() {
+    try { history.pushState(null, '', baseUrl()); } catch (e) { location.hash = ''; }
+    route();
+  }
+  function route() {
+    var hash = location.hash;
+    if (!hash || hash === '#') { renderMake(); return; }
+    var cfg = PG.decodeHash(hash);
+    if (cfg) renderViewPage(cfg); else renderBroken();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "b4c9f7e78daf4edb84ef52b88633f649"}'></script>
+</body>
+</html>
